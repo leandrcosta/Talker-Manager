@@ -47,21 +47,23 @@ router.post('/',
     validateAuthentication,
     validateUserName,
     validateAge,
+    validateTalk,
     validateWatchedAt,
-    validateRate,
-    validateTalk, async (req, res) => {
-      const { id, name, age, talk } = req.params;
+    validateRate, async (req, res) => {
+      const { id } = req.params;
+      const { name, age, talk } = req.body;
       const objectTalks = await readTalkers();
-      objectTalks.filter((talker) => talker.id !== Number(id));
       const update = {
-        id,
+        id: Number(id),
         name,
         age,
         talk,
       };
-      objectTalks.push(update);
-      await writeTalkers(objectTalks);
-      res.status(200).json(update);
+
+      const test = objectTalks.filter((talker) => Number(talker.id) !== Number(id));
+      test.push(update);
+      await writeTalkers(test);
+      return res.status(200).json(update);
     });
 
     router.delete('/:id', validateAuthentication, async (req, res) => {
